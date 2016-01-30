@@ -7,7 +7,7 @@
     "json",
     "javascript"
   ],
-  "repository": "https://github.com/atom/atom-move-line",
+  "repository": "https://github.com/VoronaPavel/atom-move-line",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
