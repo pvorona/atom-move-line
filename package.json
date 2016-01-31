@@ -8,7 +8,8 @@
   },
   "keywords": [
     "json",
-    "javascript"
+    "javascript",
+    "typescript"
   ],
   "repository": "https://github.com/VoronaPavel/atom-move-line",
   "license": "MIT",
