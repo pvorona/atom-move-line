@@ -20,7 +20,6 @@ module.exports = MoveLine =
     action(editor)
     editor.setSelectedBufferRanges(selectionRanges)
 
-
   moveUp: (editor) ->
     moveLines = ({row}) ->
       lastLine = (prevLine, lastLine) ->
