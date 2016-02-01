@@ -15,11 +15,10 @@ module.exports = MoveLine =
     editor = atom.workspace.getActiveTextEditor()
     action(editor)
 
-  preservingSelections: (action) ->
-    (editor) ->
-      selectionRanges = editor.getSelectedBufferRanges()
-      action(editor)
-      editor.setSelectedBufferRanges(selectionRanges)
+  preservingSelections: (action) -> (editor) ->
+    selectionRanges = editor.getSelectedBufferRanges()
+    action(editor)
+    editor.setSelectedBufferRanges(selectionRanges)
 
 
   moveUp: (editor) ->
