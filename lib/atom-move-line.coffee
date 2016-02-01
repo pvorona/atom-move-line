@@ -1,69 +1,44 @@
 {CompositeDisposable} = require 'atom'
 
 module.exports = MoveLine =
-  subscriptions: null
-
   activate: ->
     @subscriptions = new CompositeDisposable
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'editor:move-line-up':   => @withActiveEditor(@preservingSelections(@moveUp))
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'editor:move-line-down': => @withActiveEditor(@preservingSelections(@moveDown))
+    @subscriptions.add atom.commands.add 'atom-text-editor', subscriptions
 
   deactivate: ->
     @subscriptions.dispose()
 
-  withActiveEditor: (action) ->
-    editor = atom.workspace.getActiveTextEditor()
-    action(editor)
+subscriptions =
+  'editor:move-line-up'  : => withActiveEditor preservingSelections moveUp
+  'editor:move-line-down': => withActiveEditor preservingSelections moveDown
 
-  preservingSelections: (action) -> (editor) ->
-    selectionRanges = editor.getSelectedBufferRanges()
-    action(editor)
-    editor.setSelectedBufferRanges(selectionRanges)
+withActiveEditor = (action) ->
+  action(atom.workspace.getActiveTextEditor())
 
-  moveUp: (editor) ->
-    moveLines = ({row}) ->
-      lastLine = (prevLine, lastLine) ->
-        prevLine.endsWith(',') and not lastLine.endsWith(',')
-      declaration = (line) ->
-        line.endsWith('{') or line.endsWith('[')
-      moveToEndOfLine = (line) ->
-        editor.setCursorBufferPosition([line, 0])
-        editor.moveToEndOfLine()
-      addComma = (row) ->
-        moveToEndOfLine(row)
-        editor.insertText(',')
-      removeComma = (row) ->
-        moveToEndOfLine(row)
-        editor.backspace()
-      prevRow = row + 1
-      currentRowText = editor.lineTextForBufferRow(row)
-      previousRowText = editor.lineTextForBufferRow(prevRow)
-      return unless lastLine(previousRowText, currentRowText)
-      return if declaration(currentRowText)
-      addComma(row)
-      removeComma(prevRow)
-    editor.getCursorBufferPositions().forEach(moveLines)
+preservingSelections = (action) -> (editor) ->
+  selections = editor.getSelectedBufferRanges()
+  action(editor)
+  editor.setSelectedBufferRanges(selections)
 
-  moveDown: (editor) ->
-    moveLines = ({row}) ->
-      lastLine = (prevLine, lastLine) ->
-        prevLine.endsWith(',') and not lastLine.endsWith(',')
-      declaration = (line) ->
-        line.endsWith('{') or line.endsWith('[')
-      moveToEndOfLine = (line) ->
-        editor.setCursorBufferPosition([line, 0])
-        editor.moveToEndOfLine()
-      addComma = (row) ->
-        moveToEndOfLine(row)
-        editor.insertText(',')
-      removeComma = (row) ->
-        moveToEndOfLine(row)
-        editor.backspace()
-      nextRow = row - 1
-      currentRowText = editor.lineTextForBufferRow(row)
-      nextRowText = editor.lineTextForBufferRow(nextRow)
-      return unless lastLine(currentRowText, nextRowText)
-      return if declaration(nextRowText)
-      addComma(nextRow)
-      removeComma(row)
-    editor.getCursorBufferPositions().reverse().forEach(moveLines)
+lastLine = (prevLine, lastLine) ->
+  prevLine.endsWith(',') and not lastLine.endsWith(',')
+
+declaration = (line) ->
+  line.endsWith('{') or line.endsWith('[')
+
+atTheEndOfLine = (line, action) -> (editor) ->
+  editor.setCursorBufferPosition([line])
+  editor.moveToEndOfLine()
+  action()
+
+moveLines = (prevRow, lastRow) -> (editor) ->
+  [prevLineText, lastLineText] = [editor.lineTextForBufferRow(prevRow), editor.lineTextForBufferRow(lastRow)]
+  return if not lastLine(prevLineText, lastLineText) or declaration(lastLineText)
+  atTheEndOfLine(lastRow, => editor.insertText(','))(editor)
+  atTheEndOfLine(prevRow, => editor.backspace())(editor)
+
+moveUp = (editor) ->
+  editor.getCursorBufferPositions().forEach(({row}) -> moveLines(row + 1, row)(editor))
+
+moveDown = (editor) ->
+  editor.getCursorBufferPositions().reverse().forEach(({row}) -> moveLines(row, row - 1)(editor))
