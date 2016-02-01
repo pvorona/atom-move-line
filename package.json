@@ -14,7 +14,7 @@
     "javascript",
     "typescript"
   ],
-  "repository": "https://github.com/VoronaPavel/atom-move-line",
+  "repository": "https://github.com/pvorona/atom-move-line",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
