@@ -3,6 +3,9 @@
 withActiveEditor = (action) ->
   action(atom.workspace.getActiveTextEditor())
 
+collapsingHistory = (action) -> (editor) ->
+  editor.transact(100, -> action(editor))
+
 preservingSelections = (action) -> (editor) ->
   selections = editor.getSelectedBufferRanges()
   action(editor)
@@ -34,8 +37,8 @@ moveDown = (editor) ->
   editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLines(row, row - 1)(editor)
 
 subscriptions =
-  'editor:move-line-up'  : => withActiveEditor preservingSelections moveUp
-  'editor:move-line-down': => withActiveEditor preservingSelections moveDown
+  'editor:move-line-up'  : => withActiveEditor collapsingHistory preservingSelections moveUp
+  'editor:move-line-down': => withActiveEditor collapsingHistory preservingSelections moveDown
 
 module.exports =
   activate: ->
