@@ -1,17 +1,5 @@
 {CompositeDisposable} = require 'atom'
 
-module.exports = MoveLine =
-  activate: ->
-    @subscriptions = new CompositeDisposable
-    @subscriptions.add atom.commands.add 'atom-text-editor', subscriptions
-
-  deactivate: ->
-    @subscriptions.dispose()
-
-subscriptions =
-  'editor:move-line-up'  : => withActiveEditor preservingSelections moveUp
-  'editor:move-line-down': => withActiveEditor preservingSelections moveDown
-
 withActiveEditor = (action) ->
   action(atom.workspace.getActiveTextEditor())
 
@@ -38,7 +26,19 @@ moveLines = (prevRow, lastRow) -> (editor) ->
   atTheEndOfLine(prevRow, => editor.backspace())(editor)
 
 moveUp = (editor) ->
-  editor.getCursorBufferPositions().forEach(({row}) -> moveLines(row + 1, row)(editor))
+  editor.getCursorBufferPositions().forEach ({row}) -> moveLines(row + 1, row)(editor)
 
 moveDown = (editor) ->
-  editor.getCursorBufferPositions().reverse().forEach(({row}) -> moveLines(row, row - 1)(editor))
+  editor.getCursorBufferPositions().reverse().forEach ({row}) -> moveLines(row, row - 1)(editor)
+
+subscriptions =
+  'editor:move-line-up'  : => withActiveEditor preservingSelections moveUp
+  'editor:move-line-down': => withActiveEditor preservingSelections moveDown
+
+module.exports =
+  activate: ->
+    @subscriptions = new CompositeDisposable
+    @subscriptions.add atom.commands.add 'atom-text-editor', subscriptions
+
+  deactivate: ->
+    @subscriptions.dispose()
