@@ -26,10 +26,12 @@ moveLines = (prevRow, lastRow) -> (editor) ->
   atTheEndOfLine(prevRow, => editor.backspace())(editor)
 
 moveUp = (editor) ->
-  editor.getCursorBufferPositions().forEach ({row}) -> moveLines(row + 1, row)(editor)
+  editor.splitSelectionsIntoLines()
+  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLines(row + 1, row)(editor)
 
 moveDown = (editor) ->
-  editor.getCursorBufferPositions().reverse().forEach ({row}) -> moveLines(row, row - 1)(editor)
+  editor.splitSelectionsIntoLines()
+  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLines(row, row - 1)(editor)
 
 subscriptions =
   'editor:move-line-up'  : => withActiveEditor preservingSelections moveUp
