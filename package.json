@@ -1,7 +1,7 @@
 {
   "name": "atom-move-line",
   "main": "./lib/atom-move-line",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "This package takes care of trailing commas when moving lines in json with 'editor:move-line-up' and 'editor:move-line-down'",
   "activationCommands": {
     "atom-text-editor": [
