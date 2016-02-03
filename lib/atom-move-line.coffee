@@ -24,19 +24,20 @@ lastLine = (prevLine, lastLine) ->
   prevLine.endsWith(',') and not lastLine.endsWith(',')
 
 declaration = (line) ->
-  line.endsWith('{') or line.endsWith('[')
+  ['{', '['].some (terminator) -> line.endsWith terminator
 
-moveLines = (prevRow, lastRow) -> (editor) ->
-  [prevLineText, lastLineText] = [editor.lineTextForBufferRow(prevRow), editor.lineTextForBufferRow(lastRow)]
-  return if not lastLine(prevLineText, lastLineText) or declaration(lastLineText)
-  atTheEndOfLine(lastRow, -> editor.insertText(','))(editor)
-  atTheEndOfLine(prevRow, -> editor.backspace())(editor)
+moveLastChar = (from, to) -> (editor) ->
+  [fromLine, toLine] = [editor.lineTextForBufferRow(from), editor.lineTextForBufferRow(to)]
+  return if not lastLine(fromLine, toLine) or declaration(toLine)
+  lastChar = fromLine[fromLine.length - 1]
+  atTheEndOfLine(to, => editor.insertText(lastChar))(editor)
+  atTheEndOfLine(from, => editor.backspace())(editor)
 
 moveUp = (editor) ->
-  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLines(row + 1, row)(editor)
+  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLastChar(row + 1, row)(editor)
 
 moveDown = (editor) ->
-  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLines(row, row - 1)(editor)
+  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLastChar(row, row - 1)(editor)
 
 subscriptions =
   'editor:move-line-up'  : -> withActiveEditor collapsingHistory preservingSelections splittingMultilineSelections moveUp
