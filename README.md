@@ -9,7 +9,7 @@ This package takes care of trailing commas when moving lines in json with 'edito
 - Support multiline selections
 - Works for multiline objects **and** arrays
 - Moving comma is collapsed in undo/redo history with move-line command
-- Selections are preserved
+- Cursors ans selections are preserved
 
 *The base of this functionality is inspired by JetBrains products.*
 
