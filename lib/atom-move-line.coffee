@@ -1,22 +1,22 @@
 {CompositeDisposable} = require 'atom'
 
 withActiveEditor = (action) ->
-  action(atom.workspace.getActiveTextEditor())
+  action atom.workspace.getActiveTextEditor()
 
 collapsingHistory = (action) -> (editor) ->
-  editor.transact(100, action.bind(this, editor))
+  editor.transact 100, action.bind(this, editor)
 
 preservingSelections = (action) -> (editor) ->
   selections = editor.getSelectedBufferRanges()
-  action(editor)
-  editor.setSelectedBufferRanges(selections)
+  action editor
+  editor.setSelectedBufferRanges selections
 
 splittingMultilineSelections = (action) -> (editor) ->
   editor.splitSelectionsIntoLines()
-  action(editor)
+  action editor
 
 atTheEndOfLine = (line, action) -> (editor) ->
-  editor.setCursorBufferPosition([line])
+  editor.setCursorBufferPosition [line]
   editor.moveToEndOfLine()
   action()
 
@@ -28,7 +28,7 @@ declaration = (line) ->
 
 moveLastChar = (from, to) -> (editor) ->
   [fromLine, toLine] = [editor.lineTextForBufferRow(from), editor.lineTextForBufferRow(to)]
-  return if not lastLine(fromLine, toLine) or declaration(toLine)
+  return unless lastLine(fromLine, toLine) and not declaration(toLine)
   lastChar = fromLine[fromLine.length - 1]
   atTheEndOfLine(to, => editor.insertText(lastChar))(editor)
   atTheEndOfLine(from, => editor.backspace())(editor)
