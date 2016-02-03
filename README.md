@@ -4,6 +4,13 @@ This package takes care of trailing commas when moving lines in json with 'edito
 
 ![demo](https://raw.githubusercontent.com/pvorona/atom-move-line/master/images/demo.gif)
 
-This functionality is inspired by JetBrains products.
+**Features**
+- Support multiple cursors
+- Support multiline selections
+- Works for multiline objects **and** arrays
+- Moving comma is collapsed in undo/redo history with move-line command
 
-Please, report any bug You find.
+
+*The base of this functionality is inspired by JetBrains products.*
+
+Please, [report](https://github.com/pvorona/atom-move-line/issues/new) any bug You find.
