@@ -1,5 +1,8 @@
 {CompositeDisposable} = require 'atom'
 
+# TODO: be ready for trailing spaces/tabs
+# TODO: autoinsert coma
+
 withActiveEditor = (action) ->
   action atom.workspace.getActiveTextEditor()
 
@@ -34,10 +37,14 @@ moveLastChar = (from, to) -> (editor) ->
   atTheEndOfLine(from, => editor.backspace())(editor)
 
 moveUp = (editor) ->
-  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLastChar(row + 1, row)(editor)
+  editor.getCursorsOrderedByBufferPosition()
+    .map (c) -> c.getBufferRow()
+    .forEach (row) -> moveLastChar(row + 1, row)(editor);
 
 moveDown = (editor) ->
-  editor.getCursorsOrderedByBufferPosition().map((c) -> c.getBufferRow()).forEach (row) -> moveLastChar(row, row - 1)(editor)
+  editor.getCursorsOrderedByBufferPosition()
+    .map (c) -> c.getBufferRow()
+    .forEach (row) -> moveLastChar(row, row - 1)(editor)
 
 subscriptions =
   'editor:move-line-up'  : -> withActiveEditor collapsingHistory preservingSelections splittingMultilineSelections moveUp
@@ -50,3 +57,5 @@ module.exports =
 
   deactivate: ->
     @subscriptions.dispose()
+
+  lastLine: lastLine
