@@ -1,27 +1,12 @@
 {CompositeDisposable} = require 'atom'
+{withActiveEditor, collapsingHistory, preservingSelections, splittingMultilineSelections, atTheEndOfLine} = require './decorators.coffee'
 
 # TODO: be ready for trailing spaces/tabs
-# TODO: autoinsert coma
+# TODO: be ready for trailing comments (check grammars)
+# TODO: autoinsert comma
 
-withActiveEditor = (action) ->
-  action atom.workspace.getActiveTextEditor()
-
-collapsingHistory = (action) -> (editor) ->
-  editor.transact 100, action.bind(this, editor)
-
-preservingSelections = (action) -> (editor) ->
-  selections = editor.getSelectedBufferRanges()
-  action editor
-  editor.setSelectedBufferRanges selections
-
-splittingMultilineSelections = (action) -> (editor) ->
-  editor.splitSelectionsIntoLines()
-  action editor
-
-atTheEndOfLine = (line, action) -> (editor) ->
-  editor.setCursorBufferPosition [line]
-  editor.moveToEndOfLine()
-  action()
+endsWithComma = /^\s*.*\s*(,)\s*$/
+# endsWithComma = /^\s*(["'`]?).*(\1)\s*(,)\s*$/
 
 lastLine = (prevLine, lastLine) ->
   prevLine.endsWith(',') and not lastLine.endsWith(',')
@@ -29,9 +14,13 @@ lastLine = (prevLine, lastLine) ->
 declaration = (line) ->
   ['{', '['].some (terminator) -> line.endsWith terminator
 
+shouldMoveComma = (from, to) ->
+  lastLine(from, to) or not declaration(to)
+
 moveLastChar = (from, to) -> (editor) ->
   [fromLine, toLine] = [editor.lineTextForBufferRow(from), editor.lineTextForBufferRow(to)]
   return unless lastLine(fromLine, toLine) and not declaration(toLine)
+  # return unless shouldMoveComma(fromLine, toLine)
   lastChar = fromLine[fromLine.length - 1]
   atTheEndOfLine(to, => editor.insertText(lastChar))(editor)
   atTheEndOfLine(from, => editor.backspace())(editor)
