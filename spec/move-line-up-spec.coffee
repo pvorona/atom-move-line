@@ -75,19 +75,19 @@ describe 'move-line', ->
 
   check 'not change text when moving not on last lines of object', 'editor:move-line-up', {row: 2},
     '''
-        {
-          "lastName": "Иванов",
-          "firstName": "Иван",
-          "address": {
-            "streetAddress": "Московское ш., 101, кв.101",
-            "city": "Ленинград",
-            "postalCode": 101101
-          },
-          "phoneNumbers": [
-            "812 123-1234",
-            "916 123-4567"
-          ]
-        }
+      {
+        "lastName": "Иванов",
+        "firstName": "Иван",
+        "address": {
+          "streetAddress": "Московское ш., 101, кв.101",
+          "city": "Ленинград",
+          "postalCode": 101101
+        },
+        "phoneNumbers": [
+          "812 123-1234",
+          "916 123-4567"
+        ]
+      }
       '''
 
   check 'not change text when moving not on last lines of array', 'editor:move-line-up', {row: 5},
