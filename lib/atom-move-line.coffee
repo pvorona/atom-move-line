@@ -5,8 +5,10 @@
 # TODO: be ready for preceding/trailing comments (check grammars)
 # TODO: autoinsert comma
 
-endsWithComma = /^\s*.*\s*(,)\s*$/
-declarationStart = /.*[{\[]/
+# endsWithComma = /^\s*.*\s*(,)\s*$/
+endsWithComma = /(^\s*.*\s*),(\s*$)/
+endsWithComma1 = /(^\s*.*)(\s*$)/
+declarationStart = /.*[{\[]\s*/
 # endsWithComma = /^\s*(["'`]?).*(\1)\s*(,)\s*$/
 
 lastLine = (prevLine, lastLine) ->
@@ -21,9 +23,12 @@ shouldMoveComma = (from, to) ->
 moveLastChar = (from, to) -> (editor) ->
   [fromLine, toLine] = [editor.lineTextForBufferRow(from), editor.lineTextForBufferRow(to)]
   return unless shouldMoveComma(fromLine, toLine)
-  lastChar = fromLine[fromLine.length - 1]
-  atTheEndOfLine(to, => editor.insertText(lastChar))(editor)
-  atTheEndOfLine(from, => editor.backspace())(editor)
+  toLineModified = toLine.replace(endsWithComma1, '$1,$2')
+  console.log('toLine.replace(endsWithComma1, $1)', toLine.replace(endsWithComma1, '$1'));
+  editor.setTextInBufferRange([[to, 0], [to, toLine.length]], toLineModified)
+  # atTheEndOfLine(to, => editor.insertText(','))(editor)
+  fromLineModified = fromLine.replace(endsWithComma, '$1$2')
+  editor.setTextInBufferRange([[from, 0], [from, fromLine.length]], fromLineModified)
 
 moveUp = (editor) ->
   editor.getCursorsOrderedByBufferPosition()
