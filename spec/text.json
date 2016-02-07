@@ -37,3 +37,5 @@ a: bc
 'a',
 "a",
 `a`,
+
+// Even number of same quotes

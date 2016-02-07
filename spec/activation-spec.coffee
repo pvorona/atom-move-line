@@ -4,14 +4,14 @@ xdescribe 'activation', ->
   dispatch = (command, callback) ->
     atom.commands.dispatch textEditorElement, command
     waitsForPromise -> activationPromise
-    runs(callback)
+    runs callback
 
   beforeEach ->
     runs ->
+      activationPromise = atom.packages.activatePackage('atom-move-line')
       workspaceElement = atom.views.getView(atom.workspace)
       editor = atom.workspace.getActiveTextEditor()
       textEditorElement = atom.views.getView(editor)
-      activationPromise = atom.packages.activatePackage 'atom-move-line'
 
   it 'should not be loaded on start', ->
     expect(atom.packages.getActivePackage('atom-move-line')).toBe(undefined)
