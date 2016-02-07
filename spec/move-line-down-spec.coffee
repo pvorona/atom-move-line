@@ -1,4 +1,4 @@
-fdescribe 'editor:move-line-down', ->
+describe 'editor:move-line-down', ->
   [text, editor, activationPromise, workspaceElement, textEditorElement] = []
   text =
     '''
