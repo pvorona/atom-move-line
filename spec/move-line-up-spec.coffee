@@ -1,4 +1,4 @@
-fdescribe 'move-line', ->
+describe 'move-line', ->
   [editor, activationPromise, workspaceElement, textEditorElement] = []
   text =
     '''
@@ -6,13 +6,13 @@ fdescribe 'move-line', ->
         "firstName": "Иван",
         "lastName": "Иванов",
         "address": {
-            "streetAddress": "Московское ш., 101, кв.101",
-            "city": "Ленинград",
-            "postalCode": 101101
+          "streetAddress": "Московское ш., 101, кв.101",
+          "city": "Ленинград",
+          "postalCode": 101101
         },
         "phoneNumbers": [
-            "812 123-1234",
-            "916 123-4567"
+          "812 123-1234",
+          "916 123-4567"
         ]
       }
     '''
@@ -45,13 +45,13 @@ fdescribe 'move-line', ->
         "firstName": "Иван",
         "lastName": "Иванов",
         "address": {
-            "streetAddress": "Московское ш., 101, кв.101",
-            "city": "Ленинград",
-            "postalCode": 101101
+          "streetAddress": "Московское ш., 101, кв.101",
+          "city": "Ленинград",
+          "postalCode": 101101
         },
         "phoneNumbers": [
-            "916 123-4567",
-            "812 123-1234"
+          "916 123-4567",
+          "812 123-1234"
         ]
       }
     '''

@@ -9,19 +9,18 @@ endsWithComma = /^\s*.*\s*(,)\s*$/
 # endsWithComma = /^\s*(["'`]?).*(\1)\s*(,)\s*$/
 
 lastLine = (prevLine, lastLine) ->
-  prevLine.match(endsWithComma)? and not lastLine.match(endsWithComma)?
-  # prevLine.endsWith(',') and not lastLine.endsWith(',')
+  prevLine.endsWith(',') and not lastLine.endsWith(',')
 
 declaration = (line) ->
   ['{', '['].some (terminator) -> line.endsWith terminator
 
 shouldMoveComma = (from, to) ->
-  lastLine(from, to) or declaration(to)
+  lastLine(from, to) or not declaration(to)
 
 moveLastChar = (from, to) -> (editor) ->
   [fromLine, toLine] = [editor.lineTextForBufferRow(from), editor.lineTextForBufferRow(to)]
-  # return unless lastLine(fromLine, toLine) and not declaration(toLine)
-  return unless shouldMoveComma(fromLine, toLine)
+  return unless lastLine(fromLine, toLine) and not declaration(toLine)
+  # return unless shouldMoveComma(fromLine, toLine)
   lastChar = fromLine[fromLine.length - 1]
   atTheEndOfLine(to, => editor.insertText(lastChar))(editor)
   atTheEndOfLine(from, => editor.backspace())(editor)
