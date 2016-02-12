@@ -36,19 +36,14 @@ moveLastChar = (from, to) -> (editor) ->
   atTheEndOfLine(to, => editor.insertText(lastChar))(editor)
   atTheEndOfLine(from, => editor.backspace())(editor)
 
-moveUp = (editor) ->
+move = (from, to) -> (editor) ->
   editor.getCursorsOrderedByBufferPosition()
     .map (c) -> c.getBufferRow()
-    .forEach (row) -> moveLastChar(row + 1, row)(editor);
-
-moveDown = (editor) ->
-  editor.getCursorsOrderedByBufferPosition()
-    .map (c) -> c.getBufferRow()
-    .forEach (row) -> moveLastChar(row, row - 1)(editor)
+    .forEach (row) -> moveLastChar(row + from, row + to)(editor)
 
 subscriptions =
-  'editor:move-line-up'  : -> withActiveEditor collapsingHistory preservingSelections splittingMultilineSelections moveUp
-  'editor:move-line-down': -> withActiveEditor collapsingHistory preservingSelections splittingMultilineSelections moveDown
+  'editor:move-line-up'  : -> withActiveEditor collapsingHistory preservingSelections splittingMultilineSelections move 1,  0
+  'editor:move-line-down': -> withActiveEditor collapsingHistory preservingSelections splittingMultilineSelections move 0, -1
 
 module.exports =
   activate: ->
