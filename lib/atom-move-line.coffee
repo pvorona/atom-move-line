@@ -1,6 +1,5 @@
 {CompositeDisposable} = require 'atom'
 
-# TODO: be ready for trailing spaces/tabs
 # TODO: autoinsert coma
 
 withActiveEditor = (action) ->
@@ -36,10 +35,21 @@ moveLastChar = (from, to) -> (editor) ->
   atTheEndOfLine(to, => editor.insertText(lastChar))(editor)
   atTheEndOfLine(from, => editor.backspace())(editor)
 
+trimTrailingWhitespace = (from, to) -> (editor) ->
+  whitespaceRegex = /\s+$/
+  [from, to].forEach (row) ->
+    lineText = editor.lineTextForBufferRow(row)
+    if whitespaceRegex.test(lineText)
+      newLineText = lineText.replace(whitespaceRegex, "")
+      rowBufferRange = editor.bufferRangeForBufferRow(row)
+      editor.getBuffer().setTextInRange(rowBufferRange, newLineText)
+
 move = (from, to) -> (editor) ->
   editor.getCursorsOrderedByBufferPosition()
     .map (c) -> c.getBufferRow()
-    .forEach (row) -> moveLastChar(row + from, row + to)(editor)
+    .forEach (row) ->
+      trimTrailingWhitespace(row + from, row + to)(editor)
+      moveLastChar(row + from, row + to)(editor)
 
 subscriptions =
   'editor:move-line-up'  : -> withActiveEditor collapsingHistory preservingSelections splittingMultilineSelections move 1,  0

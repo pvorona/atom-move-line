@@ -1,6 +1,6 @@
 # atom-move-line package
 
-This package takes care of trailing commas when moving lines in json with 'editor:move-line-up' and 'editor:move-line-down'.
+This package takes care of trailing commas when moving lines in json with 'editor:move-line-up' and 'editor:move-line-down'. It also removes any trailing spaces from the moved lines.
 
 ![demo](https://raw.githubusercontent.com/pvorona/atom-move-line/master/images/demo.gif)
 
