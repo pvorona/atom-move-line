@@ -1,6 +1,5 @@
 {CompositeDisposable} = require 'atom'
 
-# TODO: be ready for trailing spaces/tabs
 # TODO: autoinsert coma
 
 withActiveEditor = (action) ->
